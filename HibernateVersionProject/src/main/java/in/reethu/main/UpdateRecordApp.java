@@ -1,0 +1,50 @@
+package in.reethu.main;
+
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+
+import in.reethu.model.MobileCustomer;
+import in.reethu.util.HibernateUtil;
+
+public class UpdateRecordApp {
+
+	public static void main(String[] args) {
+		Session session = null;
+		Transaction transaction = null;
+		boolean flag = false;
+
+		try {
+			session = HibernateUtil.getSession();
+
+			if (session != null)
+				transaction = session.beginTransaction();
+
+			if (transaction != null) {
+				MobileCustomer cust =session.get(MobileCustomer.class, 1);
+				cust.setCname("Reethu");
+				cust.setMobileNo(888888);
+				cust.setCno(1);
+				cust.setCallerTune("Hi");
+
+				session.saveOrUpdate(cust);
+				flag = true;
+			}
+		} catch (HibernateException e) {
+			e.printStackTrace();
+		} finally {
+			if (flag == true) {
+				transaction.commit();
+				System.out.println("Record updated succesfully...");
+			}
+
+			else {
+				transaction.rollback();
+				System.out.println("Record updation failed...");
+			}
+
+			HibernateUtil.closeSession(session);
+		}
+
+	}
+}
